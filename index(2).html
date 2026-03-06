@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>いずみ島DX</title>
+
+<style>
+body{
+font-family:sans-serif;
+text-align:center;
+background:#cdefff;
+}
+
+button{
+font-size:18px;
+padding:10px;
+margin:5px;
+}
+
+#map{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+margin-top:20px;
+}
+
+.character{
+border:2px solid #444;
+border-radius:10px;
+padding:10px;
+margin:5px;
+width:90px;
+background:white;
+cursor:pointer;
+}
+
+.char-icon{
+font-size:40px;
+}
+
+.male{
+color:blue;
+}
+
+.female{
+color:pink;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏝いずみ島DX</h1>
+
+<button onclick="addResident()">住民を追加</button>
+<button onclick="openApartment()">🏢マンション</button>
+
+<div id="game"></div>
+<div id="map"></div>
+
+<script>
+
+let residents = JSON.parse(localStorage.getItem("residents")) || [];
+
+function save(){
+localStorage.setItem("residents",JSON.stringify(residents));
+}
+
+function showResidents(){
+
+let map=document.getElementById("map");
+map.innerHTML="";
+
+residents.forEach((r,i)=>{
+
+let div=document.createElement("div");
+div.className="character";
+
+let genderClass=r.gender=="男"?"male":"female";
+
+div.innerHTML=
+`<div class="char-icon">${r.icon}</div>
+<div class="${genderClass}">${r.name}</div>`;
+
+div.onclick=()=>openRoom(i);
+
+map.appendChild(div);
+
+});
+
+}
+
+function addResident(){
+
+let name=prompt("名前");
+if(!name)return;
+
+let gender=prompt("性別（男 / 女）");
+
+let icon=prompt("アイコン(絵文字)", "🙂");
+
+residents.push({
+name:name,
+gender:gender,
+icon:icon,
+love:null
+});
+
+save();
+showResidents();
+
+}
+
+function openApartment(){
+
+let game=document.getElementById("game");
+
+game.innerHTML="<h2>🏢マンション</h2>";
+
+residents.forEach((r,i)=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=r.name+"の部屋";
+
+btn.onclick=()=>openRoom(i);
+
+game.appendChild(btn);
+
+});
+
+}
+
+function openRoom(i){
+
+let r=residents[i];
+
+let game=document.getElementById("game");
+
+game.innerHTML=
+`<h2>${r.icon} ${r.name}の部屋</h2>
+<p>性別: ${r.gender}</p>
+<button onclick="talk(${i})">話す</button>
+<button onclick="findLove(${i})">恋愛</button>
+<button onclick="openApartment()">戻る</button>`;
+
+}
+
+function talk(i){
+
+let msgs=[
+"今日はいい天気！",
+"お腹すいた〜",
+"散歩したい！",
+"ちょっと暇..."
+];
+
+alert(residents[i].name+"「"+msgs[Math.floor(Math.random()*msgs.length)]+"」");
+
+}
+
+function findLove(i){
+
+let r=residents[i];
+
+let candidates=residents.filter(x=>x.gender!=r.gender && x!=r);
+
+if(candidates.length==0){
+
+alert("相手がいない！");
+return;
+
+}
+
+let partner=candidates[Math.floor(Math.random()*candidates.length)];
+
+alert(r.name+" と "+partner.name+" がいい感じ！💖");
+
+r.love=partner.name;
+
+save();
+
+}
+
+showResidents();
+
+</script>
+
+</body>
+</html>

@@ -75,9 +75,90 @@ function save(){
 localStorage.setItem("residents",JSON.stringify(residents));
 }
 
-function addResident(){
+function addResident(){. 
 
-let name=prompt("名前");
+
+
+
+
+  
+function showMap(){
+
+mapDiv.innerHTML="";
+
+let mansion=document.createElement("button");
+mansion.innerText="🏢 マンション";
+mansion.onclick=openMansion;
+
+let add=document.createElement("button");
+add.innerText="➕ 住民を作る";
+add.onclick=createCharacter;
+
+mapDiv.appendChild(mansion);
+mapDiv.appendChild(add);
+
+}
+
+/* -----------------
+住民作成
+----------------- */
+
+function createCharacter(){
+
+text.innerText="住民作成";
+
+mapDiv.innerHTML="";
+
+let nameInput=document.createElement("input");
+nameInput.placeholder="名前";
+
+let imgInput=document.createElement("input");
+imgInput.placeholder="画像URL";
+
+let gender="男";
+
+let boy=document.createElement("button");
+boy.innerText="👦 男";
+boy.onclick=()=>gender="男";
+
+let girl=document.createElement("button");
+girl.innerText="👧 女";
+girl.onclick=()=>gender="女";
+
+let btn=document.createElement("button");
+btn.innerText="作成";
+
+btn.onclick=()=>{
+
+let char={
+name:nameInput.value,
+icon:imgInput.value || "https://i.imgur.com/4AiXzf8.png",
+gender:gender,
+love:null
+};
+
+characters.push(char);
+
+saveGame();
+
+text.innerText=char.name+" が引っ越してきた！";
+
+showMap();
+
+};
+
+mapDiv.appendChild(nameInput);
+mapDiv.appendChild(imgInput);
+mapDiv.appendChild(boy);
+mapDiv.appendChild(girl);
+mapDiv.appendChild(btn);
+
+}
+
+
+
+  
+/*let name=prompt("名前");
 if(!name)return;
 
 let gender=prompt("性別（男 / 女）");
@@ -94,7 +175,7 @@ save();
 
 alert(name+" が島に引っ越してきた！");
 
-}
+}*/
 
 function openApartment(){
 

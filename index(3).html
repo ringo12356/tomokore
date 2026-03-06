@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>いずみ島DX</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+text-align:center;
+background:#87CEEB;
+}
+
+button{
+padding:10px 20px;
+margin:8px;
+font-size:16px;
+border-radius:10px;
+}
+
+.resident{
+display:inline-block;
+margin:10px;
+padding:10px;
+background:white;
+border-radius:10px;
+border:2px solid #aaa;
+}
+
+.char-img{
+width:80px;
+height:80px;
+border-radius:20px;
+object-fit:cover;
+}
+
+.room-img{
+width:130px;
+border-radius:20px;
+}
+
+input{
+padding:8px;
+margin:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2 id="text">🏝 いずみ島DX</h2>
+
+<div id="map"></div>
+
+<script>
+
+let text=document.getElementById("text");
+let mapDiv=document.getElementById("map");
+
+let characters=[];
+
+function showMap(){
+
+mapDiv.innerHTML="";
+
+let mansion=document.createElement("button");
+mansion.innerText="🏢 マンション";
+mansion.onclick=openMansion;
+
+let add=document.createElement("button");
+add.innerText="➕ 住民を作る";
+add.onclick=createCharacter;
+
+mapDiv.appendChild(mansion);
+mapDiv.appendChild(add);
+
+}
+
+function createCharacter(){
+
+text.innerText="住民作成";
+
+mapDiv.innerHTML="";
+
+let nameInput=document.createElement("input");
+nameInput.placeholder="名前";
+
+let imgInput=document.createElement("input");
+imgInput.placeholder="画像URL";
+
+let gender="男";
+
+let boy=document.createElement("button");
+boy.innerText="👦 男";
+
+boy.onclick=()=>{
+gender="男";
+};
+
+let girl=document.createElement("button");
+girl.innerText="👧 女";
+
+girl.onclick=()=>{
+gender="女";
+};
+
+let btn=document.createElement("button");
+btn.innerText="作成";
+
+btn.onclick=()=>{
+
+let char={
+
+name:nameInput.value,
+icon:imgInput.value || "https://i.imgur.com/4AiXzf8.png",
+gender:gender,
+mood:"ふつう"
+
+};
+
+characters.push(char);
+
+text.innerText=char.name+" が島に引っ越してきた！";
+
+showMap();
+
+};
+
+mapDiv.appendChild(nameInput);
+mapDiv.appendChild(imgInput);
+mapDiv.appendChild(boy);
+mapDiv.appendChild(girl);
+mapDiv.appendChild(btn);
+
+}
+
+function openMansion(){
+
+text.innerText="🏢 マンション";
+
+mapDiv.innerHTML="";
+
+characters.forEach(c=>{
+
+let div=document.createElement("div");
+div.className="resident";
+
+div.innerHTML=`
+<img src="${c.icon}" class="char-img"><br>
+${c.name}<br>
+${c.gender}
+`;
+
+div.onclick=()=>enterRoom(c);
+
+mapDiv.appendChild(div);
+
+});
+
+let back=document.createElement("button");
+back.innerText="←島に戻る";
+back.onclick=showMap;
+
+mapDiv.appendChild(back);
+
+}
+
+function enterRoom(char){
+
+text.innerText=char.name+"の部屋";
+
+mapDiv.innerHTML="";
+
+let img=document.createElement("img");
+img.src=char.icon;
+img.className="room-img";
+
+let gender=document.createElement("div");
+gender.innerText="性別："+char.gender;
+
+let talk=document.createElement("button");
+talk.innerText="💬 話す";
+talk.onclick=()=>talkEvent(char);
+
+let present=document.createElement("button");
+present.innerText="🎁 プレゼント";
+present.onclick=()=>presentEvent(char);
+
+let love=document.createElement("button");
+love.innerText="❤️ 恋愛相談";
+love.onclick=()=>loveSelect(char);
+
+let game=document.createElement("button");
+game.innerText="🎮 ミニゲーム";
+game.onclick=miniGame;
+
+let back=document.createElement("button");
+back.innerText="←マンション";
+back.onclick=openMansion;
+
+mapDiv.appendChild(img);
+mapDiv.appendChild(gender);
+mapDiv.appendChild(talk);
+mapDiv.appendChild(present);
+mapDiv.appendChild(love);
+mapDiv.appendChild(game);
+mapDiv.appendChild(back);
+
+}
+
+function talkEvent(char){
+
+let msgs=[
+"こんにちは！",
+"島って平和だね",
+"お腹すいた〜",
+"暇だな〜"
+];
+
+let msg=msgs[Math.floor(Math.random()*msgs.length)];
+
+text.innerText=char.name+"「"+msg+"」";
+
+}
+
+function presentEvent(char){
+
+let items=["ケーキ","ぬいぐるみ","ゲーム","帽子"];
+
+let item=items[Math.floor(Math.random()*items.length)];
+
+text.innerText=char.name+"は "+item+" をもらって喜んでいる！";
+
+}
+
+function loveSelect(char){
+
+mapDiv.innerHTML="";
+
+text.innerText="誰が好き？";
+
+characters.forEach(target=>{
+
+if(target.gender!=char.gender && target!=char){
+
+let btn=document.createElement("button");
+
+btn.innerText=target.name;
+
+btn.onclick=()=>{
+
+let success=Math.random();
+
+if(success<0.6){
+
+text.innerText=char.name+" と "+target.name+" は付き合い始めた！ ❤️";
+
+}else{
+
+text.innerText="告白は失敗…";
+
+}
+
+};
+
+mapDiv.appendChild(btn);
+
+}
+
+});
+
+let back=document.createElement("button");
+back.innerText="戻る";
+back.onclick=()=>enterRoom(char);
+
+mapDiv.appendChild(back);
+
+}
+
+function miniGame(){
+
+mapDiv.innerHTML="";
+
+text.innerText="じゃんけん！";
+
+["グー","チョキ","パー"].forEach(p=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=p;
+
+btn.onclick=()=>{
+
+let cpu=["グー","チョキ","パー"][Math.floor(Math.random()*3)];
+
+text.innerText="あなた："+p+" / 相手："+cpu;
+
+};
+
+mapDiv.appendChild(btn);
+
+});
+
+let back=document.createElement("button");
+back.innerText="戻る";
+back.onclick=showMap;
+
+mapDiv.appendChild(back);
+
+}
+
+showMap();
+
+</script>
+
+</body>
+</html>

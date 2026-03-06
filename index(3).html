@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>いずみ島DX</title>
+
+<style>
+
+body{
+font-family:sans-serif;
+text-align:center;
+background:linear-gradient(#7ccfff,#bdeaff);
+}
+
+button{
+font-size:18px;
+padding:10px;
+margin:5px;
+border-radius:10px;
+border:none;
+background:white;
+cursor:pointer;
+}
+
+#apartment{
+display:grid;
+grid-template-columns:repeat(3,120px);
+gap:10px;
+justify-content:center;
+margin-top:20px;
+}
+
+.room{
+background:white;
+border-radius:15px;
+padding:10px;
+height:100px;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.room:hover{
+transform:scale(1.05);
+}
+
+.face{
+font-size:35px;
+}
+
+.male{
+color:blue;
+}
+
+.female{
+color:pink;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🏝いずみ島DX</h1>
+
+<button onclick="addResident()">➕住民を追加</button>
+<button onclick="openApartment()">🏢マンション</button>
+
+<div id="game"></div>
+
+<script>
+
+let residents=JSON.parse(localStorage.getItem("residents")||"[]");
+
+function save(){
+localStorage.setItem("residents",JSON.stringify(residents));
+}
+
+function addResident(){
+
+let name=prompt("名前");
+if(!name)return;
+
+let gender=prompt("性別（男 / 女）");
+
+let face=prompt("顔の絵文字🙂");
+
+residents.push({
+name:name,
+gender:gender,
+face:face
+});
+
+save();
+
+alert(name+" が島に引っ越してきた！");
+
+}
+
+function openApartment(){
+
+let game=document.getElementById("game");
+
+game.innerHTML="<h2>🏢マンション</h2><div id='apartment'></div>";
+
+let apt=document.getElementById("apartment");
+
+for(let i=0;i<9;i++){
+
+let div=document.createElement("div");
+
+div.className="room";
+
+if(residents[i]){
+
+let r=residents[i];
+
+let color=r.gender=="男"?"male":"female";
+
+div.innerHTML=
+`<div class="face">${r.face}</div>
+<div class="${color}">${r.name}</div>`;
+
+div.onclick=()=>openRoom(i);
+
+}else{
+
+div.innerHTML="空き部屋";
+
+}
+
+apt.appendChild(div);
+
+}
+
+}
+
+function openRoom(i){
+
+let r=residents[i];
+
+let game=document.getElementById("game");
+
+game.innerHTML=
+`<h2>${r.face} ${r.name}の部屋</h2>
+<p>性別：${r.gender}</p>
+
+<button onclick="talk(${i})">話す</button>
+<button onclick="back()">戻る</button>`;
+
+}
+
+function talk(i){
+
+let msgs=[
+"今日はいい天気！",
+"お腹すいた〜",
+"ゲームしたい！",
+"散歩したいな〜"
+];
+
+let msg=msgs[Math.floor(Math.random()*msgs.length)];
+
+alert(residents[i].name+"「"+msg+"」");
+
+}
+
+function back(){
+openApartment();
+}
+
+</script>
+
+</body>
+</html>

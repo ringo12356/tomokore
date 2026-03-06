@@ -20,6 +20,9 @@ border-radius:10px;
 border:none;
 background:white;
 cursor:pointer;
+-webkit-user-select: none;
+user-select: none;
+-webkit-tap-highlight-color: transparent;
 }
 
 #apartment{
@@ -37,10 +40,18 @@ padding:10px;
 height:100px;
 cursor:pointer;
 box-shadow:0 4px 10px rgba(0,0,0,0.2);
+-webkit-user-select: none;
+user-select: none;
+-webkit-tap-highlight-color: transparent;
+touch-action: manipulation;
 }
 
 .room:hover{
 transform:scale(1.05);
+}
+
+.room:active{
+transform:scale(0.98);
 }
 
 .face{
@@ -96,106 +107,6 @@ function addResident(){
   openApartment();
 }
 
-
-
-
-
-  
-function showMap(){
-
-mapDiv.innerHTML="";
-
-let mansion=document.createElement("button");
-mansion.innerText="🏢 マンション";
-mansion.onclick=openMansion;
-
-let add=document.createElement("button");
-add.innerText="➕ 住民を作る";
-add.onclick=createCharacter;
-
-mapDiv.appendChild(mansion);
-mapDiv.appendChild(add);
-
-}
-
-/* -----------------
-住民作成
------------------ */
-
-function createCharacter(){
-
-text.innerText="住民作成";
-
-mapDiv.innerHTML="";
-
-let nameInput=document.createElement("input");
-nameInput.placeholder="名前";
-
-let imgInput=document.createElement("input");
-imgInput.placeholder="画像URL";
-
-let gender="男";
-
-let boy=document.createElement("button");
-boy.innerText="👦 男";
-boy.onclick=()=>gender="男";
-
-let girl=document.createElement("button");
-girl.innerText="👧 女";
-girl.onclick=()=>gender="女";
-
-let btn=document.createElement("button");
-btn.innerText="作成";
-
-btn.onclick=()=>{
-
-let char={
-name:nameInput.value,
-icon:imgInput.value || "https://i.imgur.com/4AiXzf8.png",
-gender:gender,
-love:null
-};
-
-characters.push(char);
-
-saveGame();
-
-text.innerText=char.name+" が引っ越してきた！";
-
-showMap();
-
-};
-
-mapDiv.appendChild(nameInput);
-mapDiv.appendChild(imgInput);
-mapDiv.appendChild(boy);
-mapDiv.appendChild(girl);
-mapDiv.appendChild(btn);
-
-}
-
-
-
-  
-/*let name=prompt("名前");
-if(!name)return;
-
-let gender=prompt("性別（男 / 女）");
-
-let face=prompt("顔の絵文字🙂");
-
-residents.push({
-name:name,
-gender:gender,
-face:face
-});
-
-save();
-
-alert(name+" が島に引っ越してきた！");
-
-}*/
-
 function openApartment(){
 
 let game=document.getElementById("game");
@@ -220,7 +131,10 @@ div.innerHTML=
 `<div class="face">${r.face}</div>
 <div class="${color}">${r.name}</div>`;
 
-div.onclick=()=>openRoom(i);
+// タップイベントを addEventListener で設定（iPad対応）
+div.addEventListener("click", function(){
+  openRoom(i);
+});
 
 }else{
 

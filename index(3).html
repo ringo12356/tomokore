@@ -76,6 +76,26 @@ localStorage.setItem("residents",JSON.stringify(residents));
 }
 
 function addResident(){. 
+  function addResident(){
+  let name = prompt("名前");
+  if(!name) return;
+  
+  let gender = prompt("性別（男 / 女）");
+  
+  let face = prompt("顔の絵文字🙂");
+  
+  residents.push({
+    name: name,
+    gender: gender,
+    face: face
+  });
+  
+  save();
+  
+  alert(name + " が島に引っ越してきた！");
+  
+  openApartment();
+}
 
 
 
